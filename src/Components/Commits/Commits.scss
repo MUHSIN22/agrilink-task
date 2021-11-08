@@ -1,0 +1,12 @@
+@import '/src/variables';
+
+.commits-section{
+    background: $color-canvas-main;
+    min-height: 100vh;
+    .commit-card{
+        width: 1000px;
+        background: $color-header-bg;
+        border-radius: 10px;
+        border: 1px solid $color-border-default;
+    }
+}

@@ -1,0 +1,26 @@
+@import '/src/variables';
+
+.issue-card{
+    color: #fff;
+    border: 1px solid $color-border-default;
+    border-radius: 8px;
+    background: $color-canvas-default;
+    margin: 1rem;
+    padding: 1rem;
+    .issue-title{
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    .author-avatar{
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        margin-right: 1rem;
+    }
+    .issue-author{
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+}

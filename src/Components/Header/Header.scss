@@ -1,0 +1,17 @@
+@import '/src/variables';
+
+.header{
+    background: $color-header-bg;
+    color: #fff;
+    height: 6rem;
+    font-size: 1rem;
+    font-weight: 500;
+    display: grid;
+    place-items: center;
+    text-transform: uppercase;
+    border-bottom: 2px solid $color-border-default;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
