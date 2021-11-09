@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Link, Switch ,Route, useHistory } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
+import { useHistory } from 'react-router'
+import { EssentialContext } from '../../Assets/EssentialContext'
 import Issue from '../Issue card/Issue'
 import RepositoryBar from '../Repository bar/RepositoryBar'
 import './Home.scss'
@@ -8,17 +9,17 @@ export default function Home() {
     const [repositories, setRepositories ] = useState(null)
     const [ branches, setBranches ] = useState(null)
     const [ issues, setIssues ] = useState(null)
-    const history = useHistory()
+    const [ path, setPath ] = useState(null)
+    const [ essentials, setEssentials ] = useContext(EssentialContext)
+    
+    const history = useHistory();
 
-    const queryParams = new URLSearchParams(window.location.search);
-    const query = queryParams.get('r')
-    
-    
     useEffect(() =>{
-        getRepositories();
-        getIssuesOfRepo();
-        getBranchesOfRepo();
-    },[])
+            getRepositories();
+            getBranchesOfRepo(essentials.query);
+            getIssuesOfRepo(essentials.query);
+
+    },[essentials])
 
 
     // Function for fetch repositories
@@ -29,14 +30,14 @@ export default function Home() {
         ))
         .then(data =>{
             setRepositories(data.items)
-            if(!query){
-                history.push(`/branch?r=${data.items[0].full_name}`)
+            if(essentials.query === null){
+                setEssentials({...essentials,query:data.items[0].full_name, path: 'branch'});
             }
         })
     }
 
     // function for fetch the Branches
-    const getBranchesOfRepo = () =>{
+    const getBranchesOfRepo = (query) =>{
         fetch(`https://api.github.com/repos/${query}/branches`)
         .then(res => res.json())
         .then( data =>{
@@ -45,7 +46,7 @@ export default function Home() {
     }
 
     // Function for fetch the issues
-    const getIssuesOfRepo = () => {
+    const getIssuesOfRepo = (query) => {
         fetch(`https://api.github.com/repos/${query}/issues`)
         .then( res => res.json())
         .then( data => {
@@ -55,7 +56,7 @@ export default function Home() {
 
     // Function for delete the repositories
     const deleteRepo = () =>{
-        fetch(` https://api.github.com/repos/${query}`,{
+        fetch(` https://api.github.com/repos/${essentials.query}`,{
             method: 'DELETE'
         })
         .then(res => res.json())
@@ -63,6 +64,31 @@ export default function Home() {
             window.alert(result.message)    
         )
         
+    }
+
+    // Function for handle the branch card
+    const handleBranchCard = (param) =>{
+        setEssentials({...essentials,params:param })
+        history.push('/commits')
+    }
+
+    // Function for repo nav link handling
+    const handleRepoNavLink = (event) => {
+        switch (event.target.id){
+            case "repo-nav-link-1":
+                setPath('branch');
+                break;
+            case "repo-nav-link-2":
+                setPath('issues');
+                break;
+            default:
+                break;
+        }
+        const activeRepo = document.querySelector('.repo-nav-active')
+        if(activeRepo){
+            activeRepo.classList.remove('repo-nav-active')
+        }
+        event.target.classList.add('repo-nav-active')
     }
     return (
         <main className="home">
@@ -84,34 +110,36 @@ export default function Home() {
                 </div>
                 <div className="repo-details">
                     <nav className="repo-details-nav">
-                        <Link to={`/branch?r=${query}`}>Branches</Link>
-                        <Link to={`/issues?r=${query}`}>Issues</Link>
+                        <p className="repo-nav-link" id="repo-nav-link-1" onClick={handleRepoNavLink}>Branches</p>
+                        <p className="repo-nav-link" id="repo-nav-link-2" onClick={handleRepoNavLink}>Issues</p>
                     </nav>
-                    <Switch>
-                        <Route path="/branch" exact>
-                            {
-                                branches &&
-                                branches.map((branch,index) =>(
-                                    <div onClick={() => history.push(`/commits?branch=${branch.name}&r=${query}`)} key={index} className="branch-cards">
-                                        <h5>{branch.name}</h5>
-                                    </div>
-                                ))
-                            }
-                        </Route>
-                        <Route path="/issues">
-                            {
-                                issues && 
-                                issues.map((issue,index) =>(
-                                    <Issue
-                                        key={index}
-                                        authorName={issue.user.login}
-                                        authorAvatar={issue.user.avatar_url}
-                                        issue={issue.title}
-                                    />
-                                ))
-                            }
-                        </Route>
-                    </Switch>
+                        {
+                            path && path === 'branch' ?
+                            <>
+                                {
+                                    branches &&
+                                    branches.map((branch,index) =>(
+                                        <div  onClick={() => handleBranchCard(branch.name)} key={index} className="branch-cards">
+                                            <h5>{branch.name}</h5>
+                                        </div>
+                                    ))
+                                }
+                            </>
+                            : (path && path === 'issues') ?
+                            <>
+                                {
+                                    issues && 
+                                    issues.map((issue,index) =>(
+                                        <Issue
+                                            key={index}
+                                            authorName={issue.user.login}
+                                            authorAvatar={issue.user.avatar_url}
+                                            issue={issue.title}
+                                        />
+                                    ))
+                                }
+                            </> : null
+                        }
                 </div>
             </section>
         </main>

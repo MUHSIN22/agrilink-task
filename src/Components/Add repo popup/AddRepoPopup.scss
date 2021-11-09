@@ -1,0 +1,70 @@
+@import '/src/variables';
+.add-repo-popup-wrapper{
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.589);
+    z-index: 10000;
+    display: grid;
+    place-items: center;
+    top: 0;
+    left: 0;
+    .add-repo-popup{
+        position: relative;
+        background: $color-header-bg;
+        width: max-content;
+        padding:2rem;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid $color-border-default;
+        border-radius: 8px;
+        color: #fff;
+    }
+    input{
+        width: 20rem;
+        height: 2rem;
+        background: $color-canvas-main;
+        border: 1px solid $color-border-default;
+        border-radius: 8px;
+        color: #ffff;
+        padding: 0.5rem;
+        outline: none;
+    }
+    label{
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    .add-repo-btn{
+        width: 100%;
+        padding: 0.5rem;
+        background: $color-canvas-main;
+        border-radius: 8px;
+        border: 1px solid $color-border-default;
+        color: #fff;
+        font-weight: 600;
+        margin-top: 2rem;
+    }
+    h3{
+        width: 100%;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    .close-btn{
+        width: 3rem;
+        height: 3rem;
+        background: $color-canvas-main;
+        border-radius: 50%;
+        border: 1px solid $color-border-default;
+        position: absolute;
+        z-index: 100000;
+        top: 0;
+        right: 0;
+        display: grid;
+        place-items: center;
+        transform: translate(50%,-50%);
+        cursor: pointer;
+    }
+    path{
+        stroke: #fff;
+    }
+}
